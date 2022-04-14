@@ -7,7 +7,7 @@ import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { VueKitResolver } from '@0x-jerry/vue-kit/resolver'
 
 import OptimizationPersist from 'vite-plugin-optimize-persist'
 import PkgConfig from 'vite-plugin-package-config'
@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => ({
     // https://github.com/antfu/vite-plugin-components
     Components({
       dts: 'src/auto-components.d.ts',
-      resolvers: [ElementPlusResolver(), IconsResolver()],
+      resolvers: [VueKitResolver(), IconsResolver()],
     }),
 
     // https://github.com/hannoeru/vite-plugin-pages
