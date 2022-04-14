@@ -16,15 +16,30 @@ function startDraw() {
   draw(data)
 }
 
+type Pixel = [number, number, number]
+
 function draw(data: Uint8ClampedArray) {
-  const colors: number[][] = []
+  const colors: Pixel[] = []
 
   for (let i = 0; i < data.length; i += 4) {
-    const color = [data[i], data[i + 1], data[i + 2]]
+    const color: Pixel = [data[i], data[i + 1], data[i + 2]]
+
     colors.push(color)
   }
 
   console.log(colors.length)
+}
+
+function tryDrawPixel(x: number, y: number) {
+  if (!$canvas.value) return
+  const ctx = $canvas.value.getContext('2d')
+
+  // ctx?.rect
+  //
+}
+
+function evaluate() {
+  //
 }
 </script>
 
