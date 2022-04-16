@@ -3,11 +3,14 @@ canvas.style.display = 'none'
 
 document.body.append(canvas)
 
-function getImageData(image: HTMLImageElement, imageQuality: number): Uint8ClampedArray {
-  canvas.width = image.naturalWidth * imageQuality
-  canvas.height = image.naturalHeight * imageQuality
-  canvas.style.width = canvas.width + 'px'
-  canvas.style.height = canvas.height + 'px'
+function getImageData(image: HTMLImageElement, imageQuality: number): ImageData {
+  const w = image.naturalWidth * imageQuality
+  const h = image.naturalHeight * imageQuality
+
+  canvas.width = w
+  canvas.height = h
+  canvas.style.width = w + 'px'
+  canvas.style.height = h + 'px'
 
   const ctx = canvas.getContext('2d')
 
@@ -15,10 +18,10 @@ function getImageData(image: HTMLImageElement, imageQuality: number): Uint8Clamp
     return [] as any
   }
 
-  ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
-  const data = ctx.getImageData(0, 0, canvas.width, canvas.height)
+  ctx.drawImage(image, 0, 0, w, h)
+  const data = ctx.getImageData(0, 0, w, h)
 
-  return data.data
+  return data
 }
 
 export { getImageData }
