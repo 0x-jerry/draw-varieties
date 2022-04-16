@@ -6,6 +6,10 @@ defineProps<{
   url: string
 }>()
 
+const data = reactive({
+  quality: 1,
+})
+
 const draw = new Draw()
 
 const $canvas = ref<HTMLCanvasElement>()
@@ -17,32 +21,45 @@ const style = reactive({
   height: '100px',
 })
 
+onMounted(() => {
+  draw.stop()
+})
+
 function startDraw() {
   if (!$img.value || !$canvas.value) return
   const ctx = $canvas.value.getContext('2d')!
 
-  const data = getImageData($img.value, 0.5)
+  const imgData = getImageData($img.value, data.quality)
 
-  $canvas.value.width = data.width
-  $canvas.value.height = data.height
-  style.width = data.width + 'px'
-  style.height = data.height + 'px'
+  const w = imgData.width
+  const h = imgData.height
 
-  draw.run(ctx, data)
+  $canvas.value.width = w
+  $canvas.value.height = h
+  style.width = (w < 100 ? 100 : w) + 'px'
+  style.height = 'auto'
+  ctx.clearRect(0, 0, w, h)
+
+  draw.run(ctx, imgData)
 }
 </script>
 
 <template>
-  <div flex="~" grid="gap-x-4">
+  <k-row m="b-2" justify="center" align="items-center">
+    <input v-model.number="data.quality" type="range" step="0.01" min="0.01" max="1" />
+    {{ data.quality }}
+    <k-button @click="startDraw">Start</k-button>
+    <k-button @click="draw.toggle()">{{ draw.isStop.value ? 'Continue' : 'Stop' }}</k-button>
+    <span w="50px"> {{ draw.status.iterCount }} </span>
+    <!-- | -->
+    <span w="50px">
+      <!-- {{ draw.similarity.value.toFixed(2) }} -->
+    </span>
+  </k-row>
+
+  <k-row justify="center">
     <img ref="$img" :src="url" :style="style" />
     <canvas ref="$canvas" border="~ solid gray-200" :style="style"></canvas>
-  </div>
-
-  <k-row m="t-2">
-    <k-button @click="startDraw">Init and Start Draw</k-button>
-    <k-button @click="draw.toggle()">Toggle Draw</k-button>
-    {{ draw.status.iterCount }} |
-    {{ draw.similarity.value.toFixed(2) }}
   </k-row>
 </template>
 

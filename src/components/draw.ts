@@ -1,5 +1,3 @@
-import { sleep } from '@0x-jerry/utils'
-
 type ColorPixel = [number, number, number, number]
 
 class Pixels {
@@ -56,9 +54,11 @@ export class Draw {
     iterCount: 0,
   })
 
+  MAX_ITER_COUNT = 10_0000
+
   offsets: number[] = []
 
-  isStop = false
+  isStop = ref(false)
 
   ctx?: CanvasRenderingContext2D
 
@@ -76,6 +76,8 @@ export class Draw {
     this.real = new Pixels(canvasData)
     this.similarity.value = 0
 
+    this.offsets = []
+
     this.real.forEach((c, idx) => {
       const offset = evaluatePixelOffset(c, this.target.get(idx))
 
@@ -86,31 +88,36 @@ export class Draw {
     })
 
     this.status.iterCount = 0
-    // this.continue()
+
+    if (this.isStop.value) {
+      this.play()
+    }
   }
 
   stop() {
-    this.isStop = true
+    this.isStop.value = true
   }
 
   toggle() {
-    if (this.isStop) {
-      this.continue()
+    if (this.isStop.value) {
+      this.play()
     } else {
       this.stop()
     }
   }
 
-  async continue() {
-    this.isStop = false
+  async play() {
+    this.isStop.value = false
 
-    while (this.status.iterCount++ < 100000) {
-      if (this.isStop) {
-        break
-      }
+    const start = () => {
+      if (this.isStop.value) return
+      if (this.status.iterCount++ >= this.MAX_ITER_COUNT) return
+
       this.drawImage()
-      await sleep(10)
+      requestAnimationFrame(start)
     }
+
+    start()
   }
 
   drawImage() {
