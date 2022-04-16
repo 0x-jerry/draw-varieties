@@ -74,18 +74,19 @@ export class Draw {
     const canvasData = ctx.getImageData(0, 0, this.target.width, this.target.height)
 
     this.real = new Pixels(canvasData)
+    this.similarity.value = 0
 
-    // let min = 0
-    // let max = 0
     this.real.forEach((c, idx) => {
       const offset = evaluatePixelOffset(c, this.target.get(idx))
-      const percent = (1 / this.real.size) * (1 - offset / (255 * 2))
+
+      const percent = this.#percentage(offset)
+
       this.similarity.value += percent
       this.offsets.push(offset)
     })
 
     this.status.iterCount = 0
-    this.continue()
+    // this.continue()
   }
 
   stop() {
@@ -119,7 +120,7 @@ export class Draw {
       const offset = evaluatePixelOffset(p, pixel)
 
       if (offset < this.offsets[idx]) {
-        const percentOffset = (1 / this.target.size) * (offset - this.offsets[idx] / (255 * 2))
+        const percentOffset = this.#percentage(offset - this.offsets[idx])
 
         this.similarity.value += percentOffset
         this.offsets[idx] = offset
@@ -128,6 +129,10 @@ export class Draw {
     })
 
     ctx.putImageData(this.real.data, 0, 0)
+  }
+
+  #percentage(offset: number) {
+    return (1 / this.target.size) * (1 - offset / (255 * 3))
   }
 }
 
