@@ -1,6 +1,24 @@
+<script setup lang="ts">
+import { KImageUploaderUploadContext } from '@0x-jerry/vue-kit'
+
+const img = ref('./test.png')
+
+const upload = (ctx: KImageUploaderUploadContext) => {
+  return URL.createObjectURL(ctx.file)
+}
+</script>
+
 <template>
   <div p="x-4 y-6">
-    <h1 text="center 3xl" font="bold" m="b-6">Random Pixel</h1>
-    <draw-picture url="/default.png"></draw-picture>
+    <k-col>
+      <k-row justify="center" align="items-end">
+        <span> Choose Image: </span>
+        <k-image-uploader v-model="img" :upload="upload"></k-image-uploader>
+      </k-row>
+
+      <hr m="y-4" />
+
+      <draw-picture v-if="img" :url="img"></draw-picture>
+    </k-col>
   </div>
 </template>
